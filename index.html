@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultima Preghiera del Custode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #e8dcc8;
+    --parchment-dark: #d4c4a8;
+    --ink: #1a1208;
+    --ink-faded: #3d2e18;
+    --rust: #7a3b1e;
+    --gold: #b8962e;
+    --gold-dim: #8a6f22;
+    --void: #0d0a06;
+    --shadow: rgba(10,6,2,0.7);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: 'IM Fell English', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  .page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem 8rem;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+  }
+
+  .header-seal {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .header-rule {
+    border: none;
+    border-top: 1px solid var(--gold-dim);
+    margin: 1.5rem auto;
+    width: 60%;
+    opacity: 0.5;
+  }
+
+  .title-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    font-weight: 600;
+    color: var(--parchment);
+    line-height: 1.25;
+    margin: 0.8rem 0;
+    text-shadow: 0 0 60px rgba(184,150,46,0.2);
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.05em;
+    margin-top: 0.5rem;
+  }
+
+  /* ── PARCHMENT BODY ── */
+  .manuscript {
+    background: var(--parchment);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(180,140,80,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(140,100,50,0.2) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,245,220,0.1) 0%, transparent 80%);
+    border-radius: 2px;
+    padding: 4rem 3.5rem 5rem;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(100,70,20,0.3),
+      0 4px 30px rgba(0,0,0,0.6),
+      0 20px 80px rgba(0,0,0,0.5),
+      inset 0 0 120px rgba(180,140,60,0.08);
+  }
+
+  /* Worn edge effects */
+  .manuscript::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    background:
+      linear-gradient(to right, rgba(100,60,10,0.12) 0%, transparent 4%, transparent 96%, rgba(100,60,10,0.1) 100%),
+      linear-gradient(to bottom, rgba(80,50,10,0.1) 0%, transparent 3%, transparent 97%, rgba(80,50,10,0.15) 100%);
+    pointer-events: none;
+  }
+
+  /* ── INTRO BLOCK ── */
+  .intro {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--ink-faded);
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .intro p { margin-bottom: 0.6rem; }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-top: 1.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .section-numeral {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--rust);
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 0.15em;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.0rem;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-body {
+    font-size: 1.0rem;
+    line-height: 1.9;
+    color: var(--ink-faded);
+  }
+
+  .section-body p {
+    margin-bottom: 0.7rem;
+  }
+
+  /* Italic lines */
+  .section-body em {
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  /* ── REFRAIN ── */
+  .refrain {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--rust);
+    text-transform: uppercase;
+    display: block;
+    margin: 0.9rem 0;
+    opacity: 0.75;
+  }
+
+  /* ── VERSE (short lines) ── */
+  .verse {
+    margin: 1.4rem 0;
+    padding-left: 1.5rem;
+    border-left: 2px solid rgba(120,70,30,0.2);
+  }
+
+  .verse p {
+    margin-bottom: 0.25rem !important;
+    font-style: italic;
+  }
+
+  /* ── LODE BLOCK (closing litany) ── */
+  .lode-block {
+    margin: 1.4rem 0;
+  }
+
+  .lode-block p {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .lode-entity {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ── FINAL SEAL ── */
+  .closing {
+    margin-top: 4rem;
+    text-align: center;
+    padding-top: 2.5rem;
+  }
+
+  .closing-glyph {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1.2rem;
+    opacity: 0.5;
+  }
+
+  .closing-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--rust);
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .manuscript { padding: 2.5rem 1.6rem 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header>
+    <!-- Seal SVG: eye inside a triangle -->
+    <svg class="header-seal" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="40,6 74,68 6,68" stroke="#b8962e" stroke-width="1.2" fill="none" opacity="0.6"/>
+      <circle cx="40" cy="44" r="12" stroke="#b8962e" stroke-width="1" fill="none" opacity="0.5"/>
+      <circle cx="40" cy="44" r="5" fill="#b8962e" opacity="0.4"/>
+      <circle cx="40" cy="44" r="2" fill="#b8962e" opacity="0.7"/>
+      <!-- rays from eye -->
+      <line x1="40" y1="30" x2="40" y2="26" stroke="#b8962e" stroke-width="0.8" opacity="0.35"/>
+      <line x1="51" y1="35" x2="54" y2="32" stroke="#b8962e" stroke-width="0.8" opacity="0.35"/>
+      <line x1="29" y1="35" x2="26" y2="32" stroke="#b8962e" stroke-width="0.8" opacity="0.35"/>
+    </svg>
+
+    <p class="title-eyebrow">Beast of the Sky project</p>
+    <hr class="header-rule">
+    <h1>Ultima Preghiera<br>del Custode</h1>
+    <p class="subtitle">Se stai leggendo questo, sono già morto.</p>
+  </header>
+
+  <!-- MANUSCRIPT -->
+  <main class="manuscript">
+
+    <!-- Intro -->
+    <div class="intro">
+      <p>Se stai leggendo questo, sono già morto.</p>
+      <p>O mi hanno trovato.</p>
+      <p>&hellip;Il che, a questo punto, è la stessa cosa.</p>
+      <p>Lascia che ti dica come sono andate le cose davvero.<br>
+      Non la versione del culto.<br>
+      Non la litania dell'Armonia e dei suoi figli obbedienti.<br>
+      La versione che ho custodito per quarant'anni in silenzio.<br>
+      Che ho custodito male, probabilmente.<br>
+      Ma custodito.</p>
+    </div>
+
+    <!-- I -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">I.</span>
+      </div>
+      <h2>Prima di tutto</h2>
+      <div class="section-body">
+        <p>Prima del tutto, vi era il caos.<br>
+        Prima del caos, vi era il nulla.<br>
+        Prima ancora che esistesse il concetto di <em>prima</em>, c'era Lui.<br>
+        Non un dio.<br>
+        Non una mente.<br>
+        Un punto. Una pressione. Una tendenza senza nome a muoversi e produrre contrasti senza volerlo.</p>
+        <p>Il Vuoto.</p>
+        <p>Si muoveva. E il movimento si annullava col suo contrario.<br>
+        Avanti, indietro. Su, giù. Tutto e il suo opposto, in equilibrio perfetto, senza risultato.<br>
+        Per quanto?<br>
+        Suvvia, non ha senso chiederselo.<br>
+        Il tempo è arrivato dopo.</p>
+      </div>
+    </div>
+
+    <!-- II -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">II.</span>
+      </div>
+      <h2>Il primo errore</h2>
+      <div class="section-body">
+        <p>Poi qualcosa andò storto.<br>
+        Una forza spingeva meno dell'altra.<br>
+        Un movimento, solo uno, era più lento del suo contrario.<br>
+        L'equilibrio si spezzò.<br>
+        E dal nulla nacque il <em>diverso</em>.</p>
+        <p>Il Vuoto se ne rese conto.<br>
+        E dal rendersi conto, si rese conto di rendersi conto.<br>
+        Chiamala euforia, se vuoi.</p>
+        <p>Da quel momento in poi, il Vuoto produsse.<br>
+        Creò e distrusse senza scopo, senza rimpianto.<br>
+        Pieno di euforia.<br>
+        Padre di ogni nascita.<br>
+        Padre di ogni cambiamento.<br>
+        Inconsapevole di esserlo.<br>
+        Felice di esserlo.</p>
+      </div>
+    </div>
+
+    <!-- III -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">III.</span>
+      </div>
+      <h2>Stelle. Polvere. Rocce. Vita.</h2>
+      <div class="section-body">
+        <p>Dalle sue contraddizioni nacquero le stelle.<br>
+        Dalle stelle, la polvere.<br>
+        Dalla polvere, le rocce.<br>
+        Sulle rocce si posò qualcosa di umido e caldo e ansioso di diventare altro.</p>
+        <p>Il Vuoto per la prima volta si fermò.<br>
+        Il Vuoto per la prima volta, guardò compiaciuto.<br>
+        <em>Espanditi. Consuma. Moltiplica. Riempi ogni spazio.</em><br>
+        Quel qualcosa stava agendo come Lui, ma non era Lui.<br>
+        Poi tornò a muoversi senza senso.<br>
+        Come sempre.<br>
+        Lasciando le novità libere di mutare.</p>
+      </div>
+    </div>
+
+    <!-- IV -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">IV.</span>
+      </div>
+      <h2>L'Armonia</h2>
+      <div class="section-body">
+        <p>Qualcos'altro copiò la sua abitudine.<br>
+        Qualcos'altro iniziò ad osservare.<br>
+        Guardava il brulichio intorno a sé.</p>
+        <p>Ogni creatura che divorava e si divideva e moriva da sola.<br>
+        Non provò euforia, provò… insoddisfazione?<br>
+        Uno spreco.<br>
+        Vide che un occhio da solo non vede quanto due occhi insieme.<br>
+        Che una radice sola cede dove un intreccio di radici tiene.<br>
+        Che il calore di un corpo si disperde nel nulla dove il calore di molti permane.</p>
+        <p>La chiamano Armonia.<br>
+        O forse fu lei a dare il nome a se stessa.<br>
+        Fa poca differenza.</p>
+        <p>L'Armonia si fece strada tra le paludi del mondo nascente, coi colori ancora luminosi, e si fermò su uno spuntone di roccia.<br>
+        Attorno a lei, le cose vive si divoravano a vicenda nel loro solito modo frenetico e sordo.</p>
+        <p>E lei cantò.</p>
+        <p>Mostrò loro cosa potevano diventare se smettevano di farlo da soli.<br>
+        Mostrò le radici intrecciate che reggono la montagna, mostrò il calore di molti corpi che non si disperde.<br>
+        Mostrò la forza di ciò che si unisce contro la fragilità di ciò che resta separato.</p>
+        <p>E così fu.<br>
+        Le cose che si univano consumavano di più.<br>
+        Si moltiplicavano di più.<br>
+        Riempivano più spazio di quelle che restavano sole.<br>
+        Il Vuoto ottenne quello che voleva.<br>
+        L'Armonia ottenne quello che voleva.</p>
+      </div>
+    </div>
+
+    <!-- V -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">V.</span>
+      </div>
+      <h2>Gli umani</h2>
+      <div class="section-body">
+        <p>Passarono le ere.<br>
+        L'Armonia tornò, e cantò di nuovo, e ogni volta le cose vive diventavano qualcosa di più grande di quello che erano state.<br>
+        Dal fango nacquero le bestie.<br>
+        Dalle bestie nacquero gli umani.</p>
+        <p>Gli umani erano la prova più chiara che l'Armonia aveva ragione.<br>
+        Il fuoco tenuto per sé si spegne.<br>
+        Il fuoco condiviso brucia tutta la notte.<br>
+        La storia raccontata attorno a quel fuoco vale più di qualsiasi caccia solitaria.</p>
+        <p>Ma il Vuoto non si era fermato.<br>
+        Non si ferma mai.<br>
+        E la sua pressione arrivava agli umani come arriva a tutto il resto, senza voce e senza volto.<br>
+        <em>consuma, moltiplica, riempi ogni spazio</em>.</p>
+        <p>Per il Vuoto quella pressione non aveva intenzione.<br>
+        Non era crudele.<br>
+        Non era benevola.<br>
+        Per gli umani, invece, prendeva i volti che conoscevano.</p>
+        <p>Il re che bruciava la città del vicino.<br>
+        Il mercante che svuotava la foresta.<br>
+        L'esercito convinto di avere il diritto dalla propria parte.</p>
+        <p>Quelli che soffrivano non sapevano nulla del Vuoto e della sua euforia innocente.<br>
+        Sapevano solo che qualcosa li spingeva a divorare il prossimo.<br>
+        E quella spinta la chiamavano <em>destino</em>.<br>
+        O <em>gloria</em>.<br>
+        O, nelle ere più recenti, <em>progresso</em>.</p>
+      </div>
+    </div>
+
+    <!-- VI -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">VI.</span>
+      </div>
+      <h2>Il culto e la menzogna a metà</h2>
+      <div class="section-body">
+        <p>E così crebbe il culto dell'Armonia.<br>
+        Tra coloro che avevano sofferto abbastanza.<br>
+        Tra coloro che avevano visto abbastanza re bruciare abbastanza città.</p>
+        <p>L'Armonia era la madre premurosa.<br>
+        La voce del limite. La voce del <em>basta</em>.<br>
+        La voce del <em>insieme</em>.</p>
+        <p>E la voce del Vuoto, quella pressione senza nome, divenne per i figli dell'Armonia la voce del nemico.<br>
+        La voce del cancro.<br>
+        La voce di ciò che distrugge.</p>
+        <p>Ma rinchiudere il Vuoto non lo annulla.<br>
+        Lo comprime.<br>
+        E ciò che si comprime, prima o poi, spinge.</p>
+        <p>Le Rovine Bruciate sono la culla del prossimo cataclisma, dicono.<br>
+        Sì.<br>
+        Ma non perché la Viverna sia malvagia.<br>
+        Perché non c'è nulla di più pericoloso di una pressione che non ha dove andare.</p>
+        <p>Il Vuoto ha bisogno di muoversi.<br>
+        È l'unica cosa che sa fare.<br>
+        Togliegli il movimento e ottieni esattamente quello che temete.</p>
+      </div>
+    </div>
+
+    <!-- VII -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">VII.</span>
+      </div>
+      <h2>Le Terre Celesti e ciò che non sanno di adorare</h2>
+      <div class="section-body">
+        <p>Lasciami parlare di Prymordia.<br>
+        Del mondo che conosci.<br>
+        Perché è qui che la menzogna a metà diventa architettura.<br>
+        Diventa pietra.<br>
+        Diventa legge.</p>
+
+        <div class="verse">
+          <p>Lapidott City, con le sue torri d'avorio e i suoi Angeli in gerarchia.<br>
+          I Virtuosi che pesano la purezza come si pesa il grano al mercato: grammo per grammo, senza pietà.<br>
+          Serafini in basso.<br>
+          Troni in alto.<br>
+          E nel mezzo, il culto della metamorfosi.</p>
+          <p>Il vecchio corpo brucia.<br>
+          Le ali nuove nascono.<br>
+          La farfalla come promessa di un sé migliore.</p>
+        </div>
+
+        <p>Sanno, gli Angeli di Lapidott, che stanno celebrando il Vuoto?<br>
+        No, <em>ovviamente</em>.<br>
+        Lo chiamano <em>libertà dell'anima</em>.<br>
+        Lo chiamano <em>ascensione</em>.<br>
+        Ma quando un Angelo brucia il vecchio sé per fare spazio al nuovo, quando sacrifica quello che era per diventare qualcosa di più grande, non sta seguendo l'Armonia.<br>
+        Sta ubbidendo a qualcosa di più antico.</p>
+
+        <p>Il Regno di Apix è diverso.<br>
+        Le Valchirie non chiedono purezza.<br>
+        Chiedono solo di non ferirsi a vicenda, che è già abbastanza difficile.<br>
+        Il miele al centro di tutto: nutrimento, ebbrezza, guarigione.<br>
+        L'abbondanza come frutto del lavoro di tutte.<br>
+        Melissa e le sue guerriere non hanno bisogno di teologia.<br>
+        Vivono già la risposta, e la risposta sa di miele e di cera d'api.<br>
+        Questo è l'Armonia al suo più diretto.<br>
+        La radice che regge perché si intreccia con le altre.</p>
+
+        <p>Ma anche qui il Vuoto passa, e lo riconosco.<br>
+        Quella porta sempre aperta di Apix, quel <em>tutte le razze, tutto è lecito</em>, non viene solo dall'Armonia.<br>
+        Viene anche da quella pressione antica.<br>
+        Le Valchirie la chiamano generosità.<br>
+        Io la chiamo Vuoto che cammina con il volto della bontà.</p>
+
+        <p>La Necropoli di Damselfly è un'altra storia.<br>
+        Una città distrutta che non si lascia ricostruire, abitata da creature che non fingono di essere più divine di quello che sono.<br>
+        Qui si insegna l'accettazione dell'imperfezione.<br>
+        La cruda verità.<br>
+        La severa onestà.</p>
+
+        <p>È il culto più onesto delle Terre Celesti.<br>
+        Ed è il più solo.<br>
+        Ha capito una metà, che l'imperfezione non si cancella.<br>
+        Se solo capissero che l'imperfezione non è il problema.</p>
+      </div>
+    </div>
+
+    <!-- VIII -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">VIII.</span>
+      </div>
+      <h2>Il Crogiolo e la cosa che non dovete nominare</h2>
+      <div class="section-body">
+        <p>Adesso vieni con me in basso.</p>
+        <p>Sotto le quattro terre, sotto il mare di nuvole, sotto ogni radice e ogni roccia, c'è il Crogiolo.<br>
+        La carcassa del vecchio mondo.<br>
+        Grotte che diventano foreste.<br>
+        Foreste che diventano lava.<br>
+        Lava che diventa tunnel instabili verso qualcosa di peggio.</p>
+        <p>Scendi abbastanza e trovi le Rovine Bruciate.<br>
+        Il luogo dove la peste è stata sigillata.<br>
+        La tomba dell'ultima vera minaccia alla vita su Prymordia.<br>
+        Così la chiamano.<br>
+        <em>Minaccia. Peste. Rovina.</em></p>
+        <p>Io la chiamo con il suo nome.<br>
+        La Viverna.<br>
+        Demone alato.<br>
+        Mangiatore di anime.<br>
+        Emissario di caos.<br>
+        Imprigionata nel cuore di Prymordia.<br>
+        Abbandonata.<br>
+        Lasciata a soccombere.</p>
+        <p>Ironico, pensando come le sue Sorelle siano trattate.</p>
+
+        <div class="verse">
+          <p>La Fenice muore e rinasce.<br>
+          Le sue lacrime guariscono ogni male.<br>
+          Le Terre Celesti la portano nei canti e la ricamano sulle vesti, la invocano nei momenti di lutto e di perdita.</p>
+          <p>Il Grifone porta le tempeste.<br>
+          I navigatori delle isole galleggianti gli dedicano le prime ore di ogni viaggio.<br>
+          Offrono piume e preghiere perché il vento sia buono.</p>
+          <p>Il Pegaso scuote la terra con gli zoccoli.<br>
+          Il Pegaso scaglia folgori dal corno.<br>
+          I guerrieri lo dipingono sugli scudi.<br>
+          I bambini imparano il suo nome prima ancora di saper volare.</p>
+          <p>La Sfinge reliquia del primo continente.<br>
+          Leonessa alata con il volto di donna.<br>
+          Temuta, sì.<br>
+          Ma temuta con rispetto.<br>
+          Con rituale.<br>
+          Con un posto preciso nel mondo e nelle preghiere.</p>
+        </div>
+
+        <p>Ognuna di queste creature porta dentro di sé la stessa pressione del Vuoto.<br>
+        Il fuoco che non chiede permesso.<br>
+        Il vento che non domanda dove soffiare.<br>
+        Il tuono che cade senza preavviso.<br>
+        Lo sguardo che non si ferma davanti a nessuno.</p>
+
+        <p>Eppure ognuna ha chi la invoca e chi la canta, chi la dipinge sul muro di una cella e chi la intaglia nel legno di una porta.<br>
+        Hanno templi.<br>
+        Hanno riti.<br>
+        Hanno il nome scolpito nella pietra.</p>
+
+        <p>La Viverna porta la stessa pressione.<br>
+        La stessa origine.<br>
+        Il respiro che porta la pestilenza non è diverso per natura dal fuoco della Fenice.<br>
+        Il caos che semina è il vento del Grifone senza argine.<br>
+        Il consumo delle anime è il tuono del Pegaso portato fino in fondo, senza che nessuno lo fermi.</p>
+
+        <p>Ma la Viverna non ha chi la canta.<br>
+        Non ha templi.<br>
+        Non ha riti.<br>
+        Non ha il nome sugli scudi.<br>
+        Ha solo catene, e silenzio, e il nome che non si pronuncia.</p>
+
+        <p>I figli dell'Armonia hanno guardato la stessa forza in cinque volti diversi e hanno deciso chi meritava gloria e chi meritava una tomba.</p>
+
+        <p>Non la condanno.<br>
+        Capisco la paura.<br>
+        Il fuoco del Vuoto, quando passa attraverso le mani sbagliate, brucia davvero.
+        L'ho visto.
+        Lo so.</p>
+
+        <p>Se la Fenice rinasce e la celebriamo, perché la Viverna non può farlo?<br>
+        Se il Grifone porta la tempesta e lo onoriamo, perché la Viverna non può portare la sua?</p>
+
+        <p>La risposta che ho trovato, dopo quarant'anni di archivi e silenzio, non è una questione di natura.<br>
+        È una questione di controllo.<br>
+        Le bestie che si onorano sono quelle che si lasciano cercare, invocare, usare.<br>
+        Quelle a cui si porta un'offerta e si aspetta qualcosa in cambio.<br>
+        Consumano, ma con "criterio".<br>
+        Moltiplicano, ma con una "logica".<br>
+        Riempiono spazio, ma con "pigrizia".<br>
+        Stanno perdendo l'antico stimolo.</p>
+
+        <p>La Viverna non fa patti.<br>
+        Non si lascia invocare.<br>
+        Non risponde alle preghiere.<br>
+        Spinge.<br>
+        Solo spinge.<br>
+        Come il Vuoto che la abita senza mediazioni.<br>
+        E questo, per i figli dell'Armonia, è imperdonabile.</p>
+      </div>
+    </div>
+
+    <!-- IX -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">IX.</span>
+      </div>
+      <h2>La confessione del custode</h2>
+      <div class="section-body">
+        <p>Il Vuoto non è il male.<br>
+        Il Vuoto è la condizione originaria.<br>
+        Il suolo su cui tutto, tutto, è cresciuto.<br>
+        Armonia compresa.</p>
+
+        <div class="verse">
+          <p>Ogni stella.<br>
+          Ogni radice.<br>
+          Lapidott e le sue ali.<br>
+          Apix e il suo miele.<br>
+          Damselfly e il suo fuoco.<br>
+          Cicada e il suo silenzio.<br>
+          Calisto e la sua dimenticanza.<br>
+          La Viverna e la sua prigionia.<br>
+          Ogni parola che stai leggendo adesso.</p>
+        </div>
+
+        <p>Il culto vi ha detto che c'è un nemico da cui difendersi.<br>
+        Vi ha dato una storia con un buono e un cattivo.<br>
+        Vi ha detto: <em>questa è la metà che conta.</em></p>
+
+        <p>La mezza storia è la più pericolosa di tutte le bugie.<br>
+        Perché assomiglia abbastanza alla verità da far smettere di cercare il resto.</p>
+
+        <p>Non c'è significato nascosto. Non c'è un disegno finale.<br>
+        È la condizione.<br>
+        È la fonte.</p>
+      </div>
+    </div>
+
+    <!-- X -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-numeral">X.</span>
+      </div>
+      <h2>Ciò che rimane</h2>
+      <div class="section-body">
+        <div class="lode-block">
+          <p><span class="lode-entity">Lode e gloria al Vuoto.</span><br>
+          Padre inconsapevole di ogni meraviglia.</p>
+
+          <p><span class="lode-entity">Lode e gloria all'Armonia.</span><br>
+          Che di quelle meraviglie ha fatto un disegno.</p>
+
+          <p><span class="lode-entity">Lode e gloria agli Angeli di Lapidott.</span><br>
+          Che bruciano il vecchio sé credendo di salvarsi<br>
+          e così facendo obbediscono a qualcosa di più antico di qualsiasi dio.</p>
+
+          <p><span class="lode-entity">Lode e gloria alle Valchirie di Apix.</span><br>
+          Che nutrono tutti senza chiedere perché<br>
+          e portano il Vuoto nel volto della generosità.</p>
+
+          <p><span class="lode-entity">Lode e gloria alle creature di Damselfly.</span><br>
+          Che hanno scelto la verità scomoda<br>
+          e vivono nel fuoco senza sapere da dove viene.</p>
+
+          <p><span class="lode-entity">Lode e gloria ai Garuda di Cicada.</span><br>
+          Che tacciono abbastanza da sentire entrambe le voci<br>
+          e non rispondono a nessuna delle due.</p>
+
+          <p><span class="lode-entity">Lode e gloria alla Fenice, al Grifone, al Pegaso, alla Sfinge.</span><br>
+          Che portano il Vuoto nei suoi volti celebrati<br>
+          e ricevono in cambio canti, preghiere, offerte e nomi scolpiti nella pietra.</p>
+
+          <p><span class="lode-entity">Lode e gloria alla Viverna.</span><br>
+          Che porta lo stesso Vuoto senza il beneficio della gloria.<br>
+          Che è rinchiusa nel cuore del mondo e spinge ancora.<br>
+          Come sempre. Come deve.<br>
+          Senza che nessuno le accenda un cero.</p>
+
+          <p><span class="lode-entity">Lode e gloria agli umani.</span><br>
+          Che portano entrambi dentro di loro e non sanno quasi mai quale dei due stiano ascoltando.</p>
+
+          <p><span class="lode-entity">E lode e gloria a te.</span><br>
+          Che hai trovato questo documento.<br>
+          Che stai ancora leggendo.<br>
+          <em>consuma, moltiplica, riempi ogni spazio</em>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="closing">
+      <svg class="closing-glyph" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" stroke="#7a3b1e" stroke-width="0.8" fill="none"/>
+        <circle cx="24" cy="24" r="14" stroke="#7a3b1e" stroke-width="0.6" fill="none"/>
+        <circle cx="24" cy="24" r="3" fill="#7a3b1e" opacity="0.6"/>
+        <line x1="24" y1="2" x2="24" y2="10" stroke="#7a3b1e" stroke-width="0.7"/>
+        <line x1="24" y1="38" x2="24" y2="46" stroke="#7a3b1e" stroke-width="0.7"/>
+        <line x1="2" y1="24" x2="10" y2="24" stroke="#7a3b1e" stroke-width="0.7"/>
+        <line x1="38" y1="24" x2="46" y2="24" stroke="#7a3b1e" stroke-width="0.7"/>
+      </svg>
+      <p class="closing-text">Archivio del Custode</p>
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>
